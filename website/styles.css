@@ -1,0 +1,377 @@
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-mono: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+
+  /* Dark terminal color palette with red accents */
+  --color-terminal-bg: #0a0a0a;
+  --color-terminal-fg: #a0a0a0;
+  --color-terminal-border: #1a1a1a;
+  --color-terminal-accent: #ef4444;
+  --color-terminal-accent-dim: #dc2626;
+  --color-terminal-cyan: #6b7280;
+  --color-terminal-cyan-dim: #4b5563;
+  --color-terminal-yellow: #d29922;
+  --color-terminal-red: #ef4444;
+
+  --color-gray-100: #e5e5e5;
+  --color-gray-200: #d4d4d4;
+  --color-gray-300: #a0a0a0;
+  --color-gray-400: #737373;
+  --color-gray-500: #525252;
+  --color-gray-600: #404040;
+  --color-gray-700: #262626;
+  --color-gray-800: #171717;
+  --color-gray-900: #0a0a0a;
+
+  --font-family-mono: var(--font-mono);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-[family-name:var(--font-mono)] antialiased text-gray-300;
+    background-color: var(--color-terminal-bg);
+    position: relative;
+    padding-bottom: 80px; /* Space for sticky footer on mobile */
+  }
+
+  @media (min-width: 640px) {
+    body {
+      padding-bottom: 60px; /* Less space on desktop */
+    }
+  }
+
+  /* CRT overlay optimization */
+  #crt-overlay {
+    will-change: opacity;
+  }
+
+  /* Tag link styles for blog filtering */
+  .tag-link {
+    border-color: var(--color-terminal-border);
+    color: var(--color-terminal-fg);
+  }
+
+  .tag-link:hover:not(.active-tag) {
+    border-color: var(--color-terminal-cyan);
+    color: var(--color-terminal-cyan);
+  }
+
+  .tag-link.active-tag {
+    border-color: var(--color-terminal-accent);
+    color: var(--color-terminal-accent);
+    background: rgba(239, 68, 68, 0.1);
+  }
+}
+
+@layer components {
+  /* Typography */
+  .h1 {
+    @apply text-4xl font-bold leading-tight tracking-tight;
+    color: var(--color-terminal-accent);
+  }
+
+  .h2 {
+    @apply text-3xl font-bold leading-tight tracking-tight;
+    color: var(--color-terminal-cyan);
+  }
+
+  .h3 {
+    @apply text-2xl font-bold leading-tight;
+    color: var(--color-terminal-accent);
+  }
+
+  .h4 {
+    @apply text-xl font-bold leading-snug tracking-tight;
+    color: var(--color-terminal-cyan);
+  }
+
+  @media (min-width: 768px) {
+    .h1 {
+      @apply text-5xl;
+    }
+
+    .h2 {
+      @apply text-4xl;
+    }
+  }
+
+  /* Minimal terminal box style - no glow */
+  .terminal-box {
+    @apply relative p-6 rounded-none;
+    background: rgba(22, 27, 34, 0.4);
+    border: 1px solid var(--color-terminal-border);
+  }
+
+  /* Terminal box header */
+  .terminal-header {
+    @apply flex items-center gap-2 mb-4 pb-2 border-b border-gray-700;
+  }
+
+  .terminal-header::before {
+    content: "> ";
+    color: var(--color-terminal-accent);
+    font-weight: bold;
+  }
+
+  /* Buttons - minimal style */
+  .btn,
+  .btn-sm {
+    @apply font-bold inline-flex items-center justify-center border rounded-none leading-snug transition duration-150 ease-in-out;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .btn {
+    @apply px-6 py-3;
+    background: transparent;
+    border-color: var(--color-terminal-accent);
+    color: var(--color-terminal-accent);
+  }
+
+  .btn:hover {
+    background: var(--color-terminal-accent);
+    color: var(--color-terminal-bg);
+  }
+
+  .btn-sm {
+    @apply px-4 py-2;
+    background: transparent;
+    border-color: var(--color-terminal-cyan);
+    color: var(--color-terminal-cyan);
+  }
+
+  .btn-sm:hover {
+    background: var(--color-terminal-cyan);
+    color: var(--color-terminal-bg);
+  }
+
+  /* Prose styling for blog content */
+  .prose {
+    @apply text-gray-300;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    color: var(--color-terminal-accent);
+    font-weight: bold;
+  }
+
+  .prose a {
+    color: var(--color-terminal-cyan);
+    text-decoration: underline;
+  }
+
+  .prose a:hover {
+    color: var(--color-terminal-accent);
+  }
+
+  .prose code {
+    color: var(--color-terminal-cyan);
+    background: #0d1117;
+    padding: 0.125rem 0.25rem;
+    font-size: 0.875em;
+  }
+
+  .prose
+    :where(code):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    )::before,
+  .prose
+    :where(code):not(
+      :where([class~="not-prose"], [class~="not-prose"] *)
+    )::after {
+    content: none !important;
+  }
+
+  .prose pre {
+    border: 1px solid var(--color-terminal-border);
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .prose pre code {
+    background: transparent;
+    padding: 0;
+    color: var(--color-terminal-fg);
+  }
+
+  .prose blockquote {
+    border-left: 2px solid var(--color-terminal-accent);
+    padding-left: 1rem;
+    font-style: italic;
+    color: var(--color-terminal-fg);
+    opacity: 0.9;
+  }
+
+  .prose strong {
+    color: var(--color-terminal-cyan);
+    font-weight: bold;
+  }
+
+  .prose ul,
+  .prose ol {
+    color: var(--color-terminal-fg);
+  }
+}
+
+@layer utilities {
+  /* Hamburger button animations */
+  .hamburger svg > * {
+    transform-origin: center;
+    transform: rotate(0deg);
+  }
+
+  .hamburger svg > *:nth-child(1) {
+    transition:
+      y 0.1s 0.25s ease-in,
+      transform 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+      opacity 0.1s ease-in;
+  }
+
+  .hamburger svg > *:nth-child(2) {
+    transition: transform 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+
+  .hamburger svg > *:nth-child(3) {
+    transition:
+      y 0.1s 0.25s ease-in,
+      transform 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+      width 0.1s 0.25s ease-in;
+  }
+
+  .hamburger.active svg > *:nth-child(1) {
+    opacity: 0;
+    y: 11;
+    transform: rotate(225deg);
+    transition:
+      y 0.1s ease-out,
+      transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1),
+      opacity 0.1s 0.12s ease-out;
+  }
+
+  .hamburger.active svg > *:nth-child(2) {
+    transform: rotate(225deg);
+    transition: transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  .hamburger.active svg > *:nth-child(3) {
+    y: 11;
+    transform: rotate(135deg);
+    transition:
+      y 0.1s ease-out,
+      transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1),
+      width 0.1s ease-out;
+  }
+
+  /* Prose overflow fixes */
+  .prose pre {
+    @apply overflow-x-auto max-w-full;
+  }
+
+  .prose code {
+    @apply break-words;
+  }
+
+  .prose img {
+    @apply max-w-full h-auto;
+  }
+
+  .prose table {
+    @apply max-w-full;
+  }
+
+  .hljs {
+    background: none !important;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 500ms !important;
+  }
+
+  .animation-delay-1000 {
+    animation-delay: 1000ms !important;
+  }
+
+  .translate-z-0 {
+    transform: translateZ(0);
+  }
+
+  /* Custom AOS animations */
+  [data-aos="zoom-y-out"] {
+    transform: scaleX(1.03);
+    opacity: 0;
+    transition-property: transform, opacity;
+  }
+
+  [x-cloak] {
+    display: none;
+  }
+}
+
+/* Focus styles for keyboard accessibility */
+@layer base {
+  /* Ensure all interactive elements have visible focus */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-terminal-accent);
+    outline-offset: 2px;
+  }
+
+  /* Remove default focus outline for mouse users */
+  a:focus:not(:focus-visible),
+  button:focus:not(:focus-visible),
+  input:focus:not(:focus-visible),
+  textarea:focus:not(:focus-visible),
+  select:focus:not(:focus-visible),
+  [tabindex]:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Main content focus style when skipped to */
+  main:focus {
+    outline: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  :root {
+    --color-terminal-fg: #d4d4d4;
+    --color-terminal-border: #404040;
+  }
+
+  .opacity-50,
+  .opacity-70 {
+    opacity: 1 !important;
+  }
+}

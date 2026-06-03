@@ -1,0 +1,195 @@
+{% extends "base" %} {% block content %}
+<script type="module">
+  const mermaidElements = document.querySelectorAll("pre.mermaid");
+  if (mermaidElements) {
+    const mermaid = await import(
+      "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"
+    );
+    mermaid.default.initialize({ startOnLoad: true, theme: "dark" });
+    mermaidElements.forEach(async (element) => {
+      const graphDefinition = element.textContent;
+      const { svg } = await mermaid.default.render(
+        `mermaid-${Math.random().toString(36).substr(2, 9)}`,
+        graphDefinition,
+      );
+      element.innerHTML = svg;
+    });
+  }
+</script>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{{ host }}/blog/{{ post.slug }}"
+    },
+    "headline": "{{ post.title }}",
+    "description": "{{ post.excerpt }}",
+    "image": ["{{ host }}{{ post.thumbnail }}"],
+    "datePublished": "{{ post.date }}",
+    "dateModified": "{{ post.date }}",
+    "author": {
+      "@type": "Person",
+      "name": "Jiri Nguyen",
+      "url": "{{ host }}"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Jiri Nguyen",
+      "url": "{{ host }}"
+    }{% if post.tags %},
+    "keywords": "{{ post.tags | join(', ') }}"{% endif %}
+  }
+</script>
+
+<section aria-labelledby="article-title">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+    <div class="pt-12 pb-6 md:pt-16 md:pb-8">
+      <article itemscope itemtype="https://schema.org/BlogPosting">
+        <meta
+          itemprop="mainEntityOfPage"
+          content="{{ host }}/blog/{{ post.slug }}"
+        />
+        <meta itemprop="image" content="{{ host }}{{ post.thumbnail }}" />
+
+        <!-- Article header -->
+        <header class="mb-6">
+          <div class="terminal-box">
+            <div
+              class="terminal-header"
+              style="color: var(--color-terminal-cyan)"
+              aria-hidden="true"
+            >
+              /blog/{{ post.slug }}
+            </div>
+            <!-- Title -->
+            <h1
+              id="article-title"
+              class="text-2xl md:text-3xl font-bold mb-4"
+              style="color: var(--color-terminal-accent)"
+              itemprop="headline"
+            >
+              {{ post.title }}
+            </h1>
+            <!-- Meta -->
+            <div
+              class="flex flex-wrap items-center gap-3 text-xs border-t pt-3"
+              style="border-color: var(--color-terminal-border)"
+            >
+              <time
+                datetime="{{ post.date }}"
+                itemprop="datePublished"
+                class="opacity-70"
+                style="color: var(--color-terminal-fg)"
+                >{{ post.formatted_date }}</time
+              >
+              <meta itemprop="dateModified" content="{{ post.date }}" />
+              <span
+                itemprop="author"
+                itemscope
+                itemtype="https://schema.org/Person"
+                class="sr-only"
+              >
+                <meta itemprop="name" content="Jiri Nguyen" />
+                <link itemprop="url" href="{{ host }}" />
+              </span>
+              {% if post.tags %}
+              <span
+                style="color: var(--color-terminal-border)"
+                aria-hidden="true"
+                >|</span
+              >
+              <div class="flex flex-wrap gap-2" role="list" aria-label="Tags">
+                {% for tag in post.tags %}
+                <span
+                  class="opacity-70"
+                  style="color: var(--color-terminal-cyan)"
+                  role="listitem"
+                  itemprop="keywords"
+                  >#{{ tag }}</span
+                >
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            <!-- Description for schema -->
+            <meta itemprop="description" content="{{ post.excerpt }}" />
+          </div>
+        </header>
+
+        <!-- Article content -->
+        <div class="space-y-6">
+          <!-- Table of contents -->
+          {% if post.headings|length > 0 %}
+          <nav aria-label="Table of contents">
+            <div class="terminal-box">
+              <div
+                class="terminal-header"
+                style="color: var(--color-terminal-cyan)"
+                aria-hidden="true"
+              >
+                toc.md
+              </div>
+              <ol class="text-sm space-y-2" role="list">
+                {% for heading in post.headings %}
+                <li
+                  class="{% if heading.level <= 2 %}pl-0{% elif heading.level == 3 %}pl-4{% elif heading.level == 4 %}pl-8{% else %}pl-12{% endif %}"
+                >
+                  <a
+                    class="flex items-center hover:underline opacity-70 hover:opacity-100 transition-opacity"
+                    href="#{{ heading.slug }}"
+                    style="color: var(--color-terminal-fg)"
+                  >
+                    <span
+                      style="color: var(--color-terminal-accent)"
+                      aria-hidden="true"
+                      >></span
+                    >
+                    <span class="ml-2">{{ heading.text }}</span>
+                  </a>
+                </li>
+                {% endfor %}
+              </ol>
+            </div>
+          </nav>
+          {% endif %}
+
+          <!-- Main content -->
+          <div>
+            <div class="terminal-box">
+              <!-- Article body -->
+              <div
+                class="prose prose-invert prose-pre:rounded-none prose-pre:bg-[#0a0a0a] prose-code:rounded-none max-w-full overflow-hidden text-sm"
+                style="color: var(--color-terminal-fg)"
+                itemprop="articleBody"
+              >
+                {{ post.html | safe }}
+                <footer>
+                  <hr
+                    class="w-full h-px pt-px mt-8 border-0"
+                    style="background: var(--color-terminal-border)"
+                  />
+                  <div class="mt-6">
+                    <a
+                      href="/blog"
+                      class="inline-flex items-center text-sm font-medium hover:underline"
+                      style="color: var(--color-terminal-accent)"
+                      rel="up"
+                    >
+                      <span class="mr-2" aria-hidden="true">&lt;</span>
+                      <span>Back to blog</span>
+                    </a>
+                  </div>
+                </footer>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
